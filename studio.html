@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OzBorn Studio — Canlı Uygulama Önizlemesi</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      background: #F6F4F0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #22242C;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 0 14px;
+    }
+    .quick-nav {
+      display: flex;
+      background: #EFECE6;
+      padding: 4px;
+      border-radius: 14px;
+      border: 1px solid #DDD6CC;
+      gap: 4px;
+      margin-bottom: 10px;
+      width: 396px;
+      max-width: 100%;
+    }
+    .quick-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 7px 4px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      color: #6A6F7D;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .quick-btn.active {
+      background: #6C5CE7;
+      color: #FFFFFF;
+      box-shadow: 0 2px 6px rgba(108,92,231,0.25);
+    }
+
+    .phone {
+      width: 396px;
+      max-width: 100%;
+      height: 730px;
+      background: #F6F4F0;
+      border-radius: 36px;
+      border: 8px solid #22242C;
+      box-shadow: 0 16px 40px rgba(34, 36, 44, 0.18);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+    .status-bar {
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #6A6F7D;
+      flex-shrink: 0;
+    }
+    .ust-baslik {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 16px 10px;
+      flex-shrink: 0;
+    }
+    .geri-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 17px;
+      background: #EFECE6;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      color: #22242C;
+      flex-shrink: 0;
+    }
+    .ust-metin { flex: 1; min-width: 0; }
+    .ust-baslik-yazi { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; color: #22242C; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ust-alt-yazi { font-size: 12px; font-weight: 500; color: #6A6F7D; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .icerik {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 16px 104px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .icerik::-webkit-scrollbar { width: 4px; }
+    .icerik::-webkit-scrollbar-thumb { background: #DDD6CC; border-radius: 4px; }
+
+    .bolum { display: flex; flex-direction: column; gap: 8px; }
+    .bolum-ust { display: flex; align-items: center; justify-content: space-between; }
+    .bolum-baslik { font-size: 14px; font-weight: 800; color: #22242C; }
+    .bolum-eylem { font-size: 12px; font-weight: 700; color: #6C5CE7; cursor: pointer; background: none; border: none; font-family: inherit; }
+
+    .kart {
+      background: #FFFFFF;
+      border-radius: 20px;
+      padding: 15px;
+      border: 1px solid #ECE7E1;
+      box-shadow: 0 2px 6px rgba(34, 36, 44, 0.03);
+    }
+    .kart-liste {
+      background: #FFFFFF;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid #ECE7E1;
+      box-shadow: 0 2px 6px rgba(34, 36, 44, 0.03);
+    }
+    .satir {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ECE7E1;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .satir:last-child { border-bottom: none; }
+    .satir:hover { background: #FAF8F5; }
+    .satir-statik { cursor: default; }
+    .satir-statik:hover { background: transparent; }
+
+    .ikon-kutu {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .satir-orta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .satir-baslik { font-size: 13.5px; font-weight: 700; color: #22242C; }
+    .satir-alt { font-size: 12px; font-weight: 500; color: #6A6F7D; line-height: 1.35; }
+
+    .rozet {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .ton-vurgu { background: #EEEBFF; color: #6C5CE7; }
+    .ton-nane { background: #E3F5EC; color: #2F9E77; }
+    .ton-seftali { background: #FDEEE2; color: #E07B39; }
+    .ton-gok { background: #E4EFFB; color: #3E86D6; }
+    .ton-gul { background: #FCE7ED; color: #D9486E; }
+    .ton-limon { background: #FFF5D1; color: #B58A00; }
+    .ton-gri { background: #EFECE6; color: #6A6F7D; }
+
+    .segment {
+      display: flex;
+      background: #EFECE6;
+      border-radius: 12px;
+      padding: 3px;
+      gap: 3px;
+    }
+    .segment-oge {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 7px 6px;
+      border-radius: 9px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      color: #6A6F7D;
+      cursor: pointer;
+    }
+    .segment-oge.secili {
+      background: #FFFFFF;
+      color: #22242C;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .cip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid #ECE7E1;
+      background: #FFFFFF;
+      color: #22242C;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .cip.secili {
+      background: #6C5CE7;
+      border-color: #6C5CE7;
+      color: #FFFFFF;
+    }
+
+    .anahtar {
+      width: 42px;
+      height: 24px;
+      border-radius: 12px;
+      background: #DFD9D0;
+      padding: 2px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .anahtar.acik { background: #6C5CE7; justify-content: flex-end; }
+    .anahtar-top { width: 20px; height: 20px; border-radius: 10px; background: #FFF; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
+    .dugme {
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 13px;
+      border: none;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .dugme-birincil { background: #6C5CE7; color: #FFF; }
+    .dugme-ikincil { background: #FFFFFF; color: #22242C; border: 1px solid #ECE7E1; }
+    .dugme-yumusak { background: #EEEBFF; color: #6C5CE7; }
+    .dugme-kucuk { height: 34px; padding: 0 12px; font-size: 12px; border-radius: 10px; }
+
+    .sekme-cubugu {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 68px;
+      background: rgba(255,255,255,0.96);
+      border-top: 1px solid #ECE7E1;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 6px 4px;
+      z-index: 20;
+    }
+    .sekme-btn {
+      flex: 1;
+      border: none;
+      background: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      color: #9CA1AD;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+    .sekme-btn.aktif { color: #6C5CE7; font-weight: 700; }
+    .sekme-arti {
+      width: 42px;
+      height: 42px;
+      border-radius: 21px;
+      background: #6C5CE7;
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: -14px;
+      box-shadow: 0 6px 14px rgba(108,92,231,0.35);
+      border: 3px solid #F6F4F0;
+    }
+
+    .alt-cubuk {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #FFFFFF;
+      border-top: 1px solid #ECE7E1;
+      padding: 10px 16px 12px;
+      display: flex;
+      gap: 8px;
+      z-index: 25;
+      box-shadow: 0 -4px 16px rgba(34,36,44,0.06);
+    }
+
+    .perde {
+      position: absolute;
+      inset: 0;
+      background: rgba(20, 22, 28, 0.45);
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .alt-pencere {
+      background: #F6F4F0;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      max-height: 84%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.18);
+    }
+    .tutamak {
+      width: 38px;
+      height: 4px;
+      border-radius: 2px;
+      background: #DDD6CC;
+      margin: 10px auto 6px;
+      flex-shrink: 0;
+    }
+    .pencere-icerik {
+      padding: 10px 18px 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .bildirim {
+      position: absolute;
+      top: 30px;
+      left: 16px;
+      right: 16px;
+      background: #22242C;
+      color: #FFF;
+      padding: 10px 14px;
+      border-radius: 13px;
+      font-size: 12px;
+      font-weight: 700;
+      z-index: 60;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+    }
+
+    input, textarea {
+      width: 100%;
+      font-family: inherit;
+      font-size: 13px;
+      color: #22242C;
+      background: #FFFFFF;
+      border: 1px solid #DDD6CC;
+      border-radius: 12px;
+      padding: 9px 12px;
+      outline: none;
+    }
+    input:focus, textarea:focus { border-color: #6C5CE7; }
+  </style>
+</head>
+<body>
+  <div style="width:100%;max-width:960px;display:flex;justify-content:space-between;align-items:center;padding:8px 16px 14px;margin-bottom:6px;border-bottom:1px solid #ECE7E1">
+    <a href="./index.html" style="text-decoration:none;color:#22242C;font-weight:800;font-size:15px;display:flex;align-items:center;gap:8px">
+      <span style="width:28px;height:28px;border-radius:8px;background:#6C5CE7;color:#FFF;display:inline-flex;align-items:center;justify-content:center;font-size:12px">Oz</span>
+      <span>OzBorn Studio Web</span>
+    </a>
+    <div style="display:flex;gap:14px;font-size:12px;font-weight:600">
+      <a href="./index.html" style="color:#6A6F7D;text-decoration:none">Home</a>
+      <a href="./privacy.html" style="color:#6A6F7D;text-decoration:none">Privacy Policy</a>
+      <a href="./terms.html" style="color:#6A6F7D;text-decoration:none">Terms of Service</a>
+    </div>
+  </div>
+
+  <div class="quick-nav">
+    <button onclick="ekranAc('merkez')" id="q-merkez" class="quick-btn">Merkez</button>
+    <button onclick="ekranAc('onay')" id="q-onay" class="quick-btn active">Onay & TikTok</button>
+    <button onclick="ekranAc('kasa')" id="q-kasa" class="quick-btn">Kasa & OAuth</button>
+    <button onclick="ekranAc('asistan')" id="q-asistan" class="quick-btn">AI & Hafıza</button>
+    <button onclick="ekranAc('sablon')" id="q-sablon" class="quick-btn">Yeni Bot</button>
+  </div>
+
+  <div class="phone">
+    <div class="status-bar">
+      <span>09:41</span>
+      <span>OzBorn Studio</span>
+      <span>5G · %100</span>
+    </div>
+
+    <div id="toast" class="bildirim">
+      <span id="toast-metin"></span>
+      <span style="color:#6EE7B7">✓</span>
+    </div>
+
+    <div id="ust-alan"></div>
+    <div id="icerik-alan" class="icerik"></div>
+    <div id="alt-alan"></div>
+    <div id="pencere-alan"></div>
+  </div>
+
+  <script>
+    const durum = {
+      ekran: 'onay',
+      pencere: null,
+      editorSekme: 'metin',
+      kasaSekme: 'anahtarlar',
+      asistanSekme: 'sohbet',
+      seciliEntegrasyonId: 'tiktok',
+      seciliAnahtarKodu: 'TIKTOK_ACCESS_TOKEN',
+      akis45: false,
+      seciliAday: 1,
+      baslik: 'Merkez Bankası politika faizini %45 seviyesinde sabit tuttu',
+      ozet: 'Para Politikası Kurulu, enflasyon beklentilerindeki iyileşme kalıcı olana kadar sıkı duruşun süreceğini vurguladı.',
+      aciklama: '📌 Merkez Bankası politika faizini %45 seviyesinde sabit tuttu.\n\nKaynak: Anadolu Ajansı\n#ekonomi #faiz #merkezbankası #gündem',
+      dikeyKonum: 'orta',
+      elemanlar: { kanca: true, ozet: true, vurgu: true, alinti: true },
+      kanallar: { ig: true, reels: false, story: true, threads: true, tt: false, ttvideo: true },
+      ttGizlilik: 'PUBLIC_TO_EVERYONE',
+      ttIzin: { yorum: true, duet: true, stitch: true, ticari: false, kendiMarkam: false, sponsorlu: false },
+      tiktokBagli: true,
+      maskeler: {
+        TIKTOK_CLIENT_KEY: '••••••••8f2a',
+        TIKTOK_ACCESS_TOKEN: '••••••••90b1',
+        IG_ACCESS_TOKEN: '••••••••9a4f',
+        THREADS_ACCESS_TOKEN: '••••••••5b82',
+        GITHUB_PAT: '••••••••e420',
+        GEMINI_API_KEY: '••••••••7c3d',
+      },
+      kurallar: [
+        { id: 1, kat: 'Yazım & Üslup', ton: 'ton-vurgu', kural: 'Tık tuzağı ("Şok gelişme", "Bakın ne oldu") kesinlikle yasak; ilk cümlede somut bilgi verilir.', yanlis: 'Merkez Bankası’ndan piyasaları sarsan karar!', dogru: 'Merkez Bankası politika faizini %45 seviyesinde sabit tuttu.' },
+        { id: 2, kat: 'Haber Seçimi & Puan', ton: 'ton-limon', kural: 'Yerel adli vakalar ulusal etki taşımıyorsa en fazla 5/10 alır ve son dakika olmaz.', yanlis: 'Mahallede kavga: 9/10', dogru: '5/10 (Normal havuz)' },
+        { id: 3, kat: 'Kesin Yasak', ton: 'ton-gul', kural: 'Kaynak metinde açıkça geçmeyen hiçbir rakam veya tahmin slayta eklenmez.', dogru: 'Yalnızca resmi bültendeki oranlar yazılır.' },
+      ],
+      mesajlar: [
+        { kim: 'ben', metin: 'Bugün neden öğleden sonra tekil son dakika çıkmadı?' },
+        {
+          kim: 'asistan',
+          arac: 'Köprü özeti + Proje Hafızası okundu',
+          metin: 'Havuzdaki son haberlerde en yüksek puan 7/10 (“Cari denge fazla verdi”). Son dakika eşiği 8/10 olduğu için 10’lu tura ayrıldı. İstersen eşiği 7’ye çekebilirim:',
+          onayKarti: { baslik: 'Son dakika puan eşiğini güncelle', alt: 'DailyBrief · genel.son_dakika_puan_esigi (8 → 7)', durum: 'bekliyor' }
+        }
+      ],
+      seciliSablon: 'haber',
+      sablonAd: 'TechBrief TR',
+      sablonHesap: '@techbrief.tr'
+    };
+
+    const ENTEGRASYONLAR = {
+      tiktok: { id: 'tiktok', ad: 'TikTok Content Posting API', grup: 'sosyal', ikon: '♪', ton: 'ton-vurgu', hesap: '@dailybrief.co', kalan: 'Yetkili', kota: 'Direct Post & Upload API', not: 'Access Token (24 sa) otomatik yenilenir; Refresh Token 365 gün geçerlidir.', anahtarlar: ['TIKTOK_CLIENT_KEY', 'TIKTOK_ACCESS_TOKEN'], rehber: ['developers.tiktok.com → OzBorn Studio uygulamasını aç.', 'Login Kit (user.info.basic) ve Content Posting API (video.publish, video.upload) ekle.', 'Redirect URI olarak https://ozbornstudio.com/auth/tiktok/callback tanımla.'] },
+      meta: { id: 'meta', ad: 'Instagram & Facebook (Meta)', grup: 'sosyal', ikon: '📸', ton: 'ton-nane', hesap: '@dailybrief.co · @ezanplus', kalan: 'Süresiz', kota: 'Bugün 6/100 yayın', not: 'Süresiz Sayfa Jetonu (Page Token). Süre sınırı yoktur.', anahtarlar: ['IG_ACCESS_TOKEN'], rehber: ['Graph API Explorer üzerinden Page Access Token üret.', 'Extend Access Token ile süresiz sayfa jetonuna dönüştür.'] },
+      threads: { id: 'threads', ad: 'Threads API', grup: 'sosyal', ikon: '@', ton: 'ton-limon', hesap: '@dailybrief.co', kalan: '9 gün', kota: 'Otomatik yenilenir', not: '60 günlük jeton · Pazartesi 12:07 bakımında otomatik yenilenir.', anahtarlar: ['THREADS_ACCESS_TOKEN'], rehber: ['Meta Developer panelinde Threads API izinleriyle 60 günlük jeton üret.'] },
+      github: { id: 'github', ad: 'GitHub PAT & Worker Dispatch', grup: 'altyapi', ikon: '⚙️', ton: 'ton-limon', hesap: 'ozdogangringo-sketch', kalan: '14 gün', kota: 'Actions & Secrets', not: 'Worker GITHUB_PAT 14 gün sonra doluyor. Dolarsa onay düğmeleri durur.', anahtarlar: ['GITHUB_PAT'], rehber: ['GitHub Settings → Fine-grained tokens → Actions & Secrets (Read/Write) izni ver.'] },
+      gemini: { id: 'gemini', ad: 'Google Gemini 2.0 Flash', grup: 'yapay_zeka', ikon: '✨', ton: 'ton-nane', hesap: 'Google AI Studio', kalan: 'Geçerli', kota: '27/40 günlük istek', not: 'Ücretsiz kota + Faturalı yedek anahtar ($1,81 bu ay).', anahtarlar: ['GEMINI_API_KEY'], rehber: ['aistudio.google.com/apikey üzerinden anahtar oluştur ve kasaya kaydet.'] },
+    };
+
+    function bildir(metin) {
+      const el = document.getElementById('toast');
+      document.getElementById('toast-metin').textContent = metin;
+      el.style.display = 'flex';
+      clearTimeout(window._t);
+      window._t = setTimeout(() => { el.style.display = 'none'; }, 2400);
+    }
+    const bildirim = bildir;
+
+    function ekranAc(e) {
+      durum.ekran = e;
+      durum.pencere = null;
+      ['merkez', 'onay', 'kasa', 'asistan', 'sablon'].forEach(k => {
+        const b = document.getElementById('q-' + k);
+        if (b) b.classList.toggle('active', k === e);
+      });
+      ciz();
+      document.getElementById('icerik-alan').scrollTop = 0;
+    }
+
+    function kanalSec(k) {
+      const y = !durum.kanallar[k];
+      durum.kanallar[k] = y;
+      if (k === 'ig' && y) durum.kanallar.reels = false;
+      if (k === 'reels' && y) durum.kanallar.ig = false;
+      if (k === 'tt' && y) durum.kanallar.ttvideo = false;
+      if (k === 'ttvideo' && y) durum.kanallar.tt = false;
+      ciz();
+    }
+
+    function ustBaslikCiz(baslik, alt, geriEkrani, sagHtml = '') {
+      return `
+        <div class="ust-baslik">
+          ${geriEkrani ? `<button class="geri-btn" onclick="ekranAc('${geriEkrani}')">‹</button>` : ''}
+          <div class="ust-metin">
+            <div class="ust-baslik-yazi">${baslik}</div>
+            ${alt ? `<div class="ust-alt-yazi">${alt}</div>` : ''}
+          </div>
+          ${sagHtml}
+        </div>
+      `;
+    }
+
+    function sekmeCubuguCiz(aktif) {
+      return `
+        <div class="sekme-cubugu">
+          <button class="sekme-btn ${aktif==='merkez'?'aktif':''}" onclick="ekranAc('merkez')">
+            <span style="font-size:16px">⌂</span><span>Merkez</span>
+          </button>
+          <button class="sekme-btn ${aktif==='onay'?'aktif':''}" onclick="ekranAc('onay')">
+            <span style="font-size:16px">📥</span><span>Onaylar</span>
+          </button>
+          <button class="sekme-btn ${aktif==='sablon'?'aktif':''}" onclick="ekranAc('sablon')">
+            <div class="sekme-arti">＋</div><span>Oluştur</span>
+          </button>
+          <button class="sekme-btn ${aktif==='asistan'?'aktif':''}" onclick="ekranAc('asistan')">
+            <span style="font-size:16px">✨</span><span>Asistan</span>
+          </button>
+          <button class="sekme-btn ${aktif==='kasa'?'aktif':''}" onclick="ekranAc('kasa')">
+            <span style="font-size:16px">⚙️</span><span>Ayarlar</span>
+          </button>
+        </div>
+      `;
+    }
+
+    function cizMerkez() {
+      document.getElementById('ust-alan').innerHTML = ustBaslikCiz('Merhaba Doğukan', 'Salı · 3 proje aktif', null, `<span class="rozet ton-nane">Köprü Canlı</span>`);
+      document.getElementById('alt-alan').innerHTML = sekmeCubuguCiz('merkez');
+      document.getElementById('icerik-alan').innerHTML = `
+        <div class="kart" style="background:#E3F5EC;border-color:#C6EAD8;display:flex;align-items:center;gap:12px">
+          <div class="ikon-kutu ton-nane" style="background:#FFF">✓</div>
+          <div class="satir-orta">
+            <div class="satir-baslik" style="color:#1B654C">Her şey yolunda</div>
+            <div class="satir-alt" style="color:#2F9E77">DailyBrief 12 dk önce konuştu · 3.473 haber havuzda</div>
+          </div>
+        </div>
+
+        <div class="bolum">
+          <div class="bolum-ust">
+            <span class="bolum-baslik">Onayını bekleyen (1)</span>
+            <button class="bolum-eylem" onclick="ekranAc('onay')">Tümünü gör →</button>
+          </div>
+          <div class="kart" onclick="ekranAc('onay')" style="cursor:pointer;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span class="rozet ton-gok">DailyBrief · Son Dakika</span>
+              <span class="rozet ton-gul">Önem 9/10</span>
+            </div>
+            <div style="font-size:14px;font-weight:700;line-height:1.35">${durum.baslik}</div>
+            <div style="font-size:12px;color:#6A6F7D">4 slayt hazır · Instagram, Story, Threads, TikTok Video</div>
+          </div>
+        </div>
+
+        <div class="bolum">
+          <div class="bolum-ust"><span class="bolum-baslik">Kumanda Modülleri</span></div>
+          <div class="kart-liste">
+            <div class="satir" onclick="ekranAc('kasa')">
+              <div class="ikon-kutu ton-vurgu">🔑</div>
+              <div class="satir-orta">
+                <div class="satir-baslik">Bağlantılar ve Kilitli Kasa</div>
+                <div class="satir-alt">TikTok OAuth 2.0, jeton süreleri ve kurulum rehberleri</div>
+              </div>
+              <span class="rozet ton-nane">10 Bağlantı</span>
+            </div>
+            <div class="satir" onclick="ekranAc('onay')">
+              <div class="ikon-kutu ton-gok">✏️</div>
+              <div class="satir-orta">
+                <div class="satir-baslik">İçerik Editörü & TikTok Direct Post</div>
+                <div class="satir-alt">Başlık/yerleşim düzenleyici, 3 fotoğraf adayı ve TikTok izinleri</div>
+              </div>
+              <span class="rozet ton-vurgu">Aç →</span>
+            </div>
+            <div class="satir" onclick="ekranAc('asistan')">
+              <div class="ikon-kutu ton-nane">✨</div>
+              <div class="satir-orta">
+                <div class="satir-baslik">Gemini Asistan & Proje Hafızası</div>
+                <div class="satir-alt">Canlı sohbet, onay kartları ve ${durum.kurallar.length} kalıcı eğitim kuralı</div>
+              </div>
+              <span class="rozet ton-nane">Aktif</span>
+            </div>
+            <div class="satir" onclick="ekranAc('sablon')">
+              <div class="ikon-kutu ton-seftali">🤖</div>
+              <div class="satir-orta">
+                <div class="satir-baslik">Şablondan Yeni Bot Sihirbazı</div>
+                <div class="satir-alt">Mevcut haber/ayet/sektör motorundan yeni proje kur</div>
+              </div>
+              <span class="rozet ton-gri">Sihirbaz</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function cizOnay() {
+      const ttAcik = durum.kanallar.tt || durum.kanallar.ttvideo;
+      const acikElemanSayisi = Object.values(durum.elemanlar).filter(Boolean).length;
+      document.getElementById('ust-alan').innerHTML = ustBaslikCiz('Son dakika onayı', 'DailyBrief · 4 sayfa · 8 dk önce', 'merkez', `<span class="rozet ton-gul">9/10</span>`);
+      document.getElementById('alt-alan').innerHTML = `
+        <div class="alt-cubuk">
+          <button class="dugme dugme-ikincil" style="flex:1" onclick="bildir('İçerik atlandı, havuza döndü')">Atla</button>
+          <button class="dugme dugme-yumusak" style="flex:1.1" onclick="bildir('1 saat sonraya planlandı')">Zamanla</button>
+          <button class="dugme dugme-birincil" style="flex:1.4" onclick="bildir('Yayın başlatıldı (Instagram + TikTok Direct Post)')">Yayınla</button>
+        </div>
+      `;
+
+      document.getElementById('icerik-alan').innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div onclick="durum.pencere='foto';ciz()" style="width:${durum.akis45?'220px':'195px'};height:${durum.akis45?'275px':'315px'};border-radius:20px;background:linear-gradient(165deg,#1B2845 0%,#0F172A 100%);color:#FFF;padding:16px;display:flex;flex-direction:column;justify-content:${durum.dikeyKonum==='yukari'?'flex-start':durum.dikeyKonum==='asagi'?'flex-end':'center'};position:relative;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,0.22)">
+            <div style="position:absolute;top:11px;left:14px;right:14px;display:flex;justify-content:space-between;font-size:10px;opacity:0.8">
+              <span>DAILYBRIEF · EKONOMİ</span>
+              <span>Aday #${durum.seciliAday}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin:16px 0">
+              ${durum.elemanlar.kanca ? `<span style="align-self:flex-start;background:#D9486E;color:#FFF;font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px">SON DAKİKA</span>` : ''}
+              <div style="font-weight:800;font-size:13px;line-height:1.3">
+                ${durum.elemanlar.vurgu ? `<span style="background:rgba(250,204,21,0.28);padding:0 3px;border-radius:3px">${durum.baslik}</span>` : durum.baslik}
+              </div>
+              ${durum.elemanlar.ozet ? `<div style="font-size:11px;color:#CBD5E1;line-height:1.35">${durum.ozet}</div>` : ''}
+            </div>
+            <div style="position:absolute;bottom:10px;left:14px;right:14px;display:flex;justify-content:space-between;font-size:9px;color:#94A3B8">
+              <span>Kaynak: AA</span><span>Slayt 1 / 4</span>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:6px">
+            <button class="cip ${!durum.akis45?'secili':''}" onclick="durum.akis45=false;ciz()">9:16 tam</button>
+            <button class="cip ${durum.akis45?'secili':''}" onclick="durum.akis45=true;ciz()">Akışta 4:5</button>
+            <button class="cip" onclick="durum.pencere='foto';ciz()">🖼️ 3 Fotoğraf Adayı</button>
+          </div>
+        </div>
+
+        <div class="bolum">
+          <div class="bolum-ust">
+            <span class="bolum-baslik">Başlık ve özet</span>
+            <button class="bolum-eylem" onclick="durum.pencere='editor';ciz()">Düzenle & Yerleşim</button>
+          </div>
+          <div class="kart" onclick="durum.pencere='editor';ciz()" style="cursor:pointer;display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:14px;font-weight:700;line-height:1.35">${durum.baslik}</div>
+            <div style="font-size:12.5px;color:#6A6F7D;line-height:1.4">${durum.ozet}</div>
+            <div style="display:flex;gap:6px;padding-top:4px">
+              <span class="rozet ton-gri">Konum: ${durum.dikeyKonum==='yukari'?'Üst':durum.dikeyKonum==='asagi'?'Alt':'Orta'}</span>
+              <span class="rozet ton-vurgu">${acikElemanSayisi}/4 slayt öğesi açık</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bolum">
+          <div class="bolum-ust"><span class="bolum-baslik">Nerede yayınlansın?</span></div>
+          <div class="kart-liste">
+            ${[
+              ['ig', '📸', 'ton-gul', 'Instagram Gönderisi', 'Kaydırmalı karusel (4:5)'],
+              ['reels', '🎬', 'ton-seftali', 'Instagram Reels', '9:16 dikey video (IG ile birlikte seçilemez)'],
+              ['story', '⭕', 'ton-vurgu', 'Instagram Story', 'Kapak slaytı hikayeye atılır'],
+              ['threads', '@', 'ton-gri', 'Threads', 'Zincir gönderi'],
+              ['ttvideo', '♪', 'ton-gok', 'TikTok Video (Direct Post)', '9:16 video · Content Posting API'],
+              ['tt', '🖼️', 'ton-gok', 'TikTok Fotoğraf', 'Kaydırmalı fotoğraf (Video ile birlikte seçilemez)']
+            ].map(([kod, ik, ton, ad, alt]) => `
+              <div class="satir" onclick="kanalSec('${kod}')">
+                <div class="ikon-kutu ${ton}">${ik}</div>
+                <div class="satir-orta">
+                  <div class="satir-baslik">${ad}</div>
+                  <div class="satir-alt">${alt}</div>
+                </div>
+                <div class="anahtar ${durum.kanallar[kod]?'acik':''}"><div class="anahtar-top"></div></div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        ${ttAcik ? `
+          <div class="bolum">
+            <div class="bolum-ust">
+              <span class="bolum-baslik">TikTok Paylaşım Ayarları (Direct Post)</span>
+              <span class="rozet ton-vurgu">Official API</span>
+            </div>
+            <div class="kart-liste">
+              <div class="satir satir-statik">
+                <div class="ikon-kutu ton-vurgu">♪</div>
+                <div class="satir-orta">
+                  <div class="satir-baslik">Hesap: @dailybrief.co</div>
+                  <div class="satir-alt">${durum.kanallar.ttvideo ? 'TikTok 9:16 Video · Direct Post' : 'TikTok Fotoğraf Karuseli'}</div>
+                </div>
+                <span class="rozet ton-nane">Yetkili</span>
+              </div>
+
+              <div class="satir satir-statik" style="flex-direction:column;align-items:stretch;gap:8px">
+                <div class="satir-alt" style="font-weight:700;color:#22242C">Kimler görebilir? (Who can view this post)</div>
+                <div class="segment">
+                  <button class="segment-oge ${durum.ttGizlilik==='PUBLIC_TO_EVERYONE'?'secili':''}" onclick="durum.ttGizlilik='PUBLIC_TO_EVERYONE';ciz()">Herkese Açık</button>
+                  <button class="segment-oge ${durum.ttGizlilik==='MUTUAL_FOLLOW_FRIENDS'?'secili':''}" onclick="durum.ttGizlilik='MUTUAL_FOLLOW_FRIENDS';ciz()">Arkadaşlar</button>
+                  <button class="segment-oge ${durum.ttGizlilik==='SELF_ONLY'?'secili':''}" onclick="durum.ttGizlilik='SELF_ONLY';ciz()">Gizli (Ben)</button>
+                </div>
+              </div>
+
+              <div class="satir satir-statik" style="flex-direction:column;align-items:stretch;gap:8px">
+                <div class="satir-alt" style="font-weight:700;color:#22242C">Kullanıcı izinleri (Allow users to)</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <button class="cip ${durum.ttIzin.yorum?'secili':''}" onclick="durum.ttIzin.yorum=!durum.ttIzin.yorum;ciz()">💬 Yorum</button>
+                  ${durum.kanallar.ttvideo ? `
+                    <button class="cip ${durum.ttIzin.duet?'secili':''}" onclick="durum.ttIzin.duet=!durum.ttIzin.duet;ciz()">👥 Düet</button>
+                    <button class="cip ${durum.ttIzin.stitch?'secili':''}" onclick="durum.ttIzin.stitch=!durum.ttIzin.stitch;ciz()">✂️ Stitch</button>
+                  ` : ''}
+                </div>
+              </div>
+
+              <div class="satir" onclick="durum.ttIzin.ticari=!durum.ttIzin.ticari;ciz()">
+                <div class="ikon-kutu ton-seftali">🏷️</div>
+                <div class="satir-orta">
+                  <div class="satir-baslik">Ticari içerik bildirimi (Disclose)</div>
+                  <div class="satir-alt">Kendi markanı veya sponsorlu ürünü tanıtıyor mu?</div>
+                </div>
+                <div class="anahtar ${durum.ttIzin.ticari?'acik':''}"><div class="anahtar-top"></div></div>
+              </div>
+
+              ${durum.ttIzin.ticari ? `
+                <div class="satir satir-statik" style="gap:8px">
+                  <button class="cip ${durum.ttIzin.kendiMarkam?'secili':''}" onclick="durum.ttIzin.kendiMarkam=!durum.ttIzin.kendiMarkam;ciz()">Kendi markam (Your brand)</button>
+                  <button class="cip ${durum.ttIzin.sponsorlu?'secili':''}" onclick="durum.ttIzin.sponsorlu=!durum.ttIzin.sponsorlu;ciz()">Sponsorlu (Branded)</button>
+                </div>
+              ` : ''}
+            </div>
+            <div style="font-size:11px;color:#9CA1AD;padding:0 4px">
+              Yayınlayarak TikTok Müzik Kullanım Onayı’nı (Music Usage Confirmation) ve Hizmet Koşulları’nı kabul etmiş olursunuz.
+            </div>
+          </div>
+        ` : ''}
+
+        <div class="bolum">
+          <div class="bolum-ust"><span class="bolum-baslik">Düzelt ve yeniden üret</span></div>
+          <div class="kart-liste">
+            <div class="satir" onclick="durum.pencere='foto';ciz()">
+              <div class="ikon-kutu ton-gok">🖼️</div>
+              <div class="satir-orta">
+                <div class="satir-baslik">3 Fotoğraf adayından seç</div>
+                <div class="satir-alt">Yan yana karşılaştır (gorsel_sec) · Bedava</div>
+              </div>
+              <span class="rozet ton-gok">Seç</span>
+            </div>
+            <div class="satir" onclick="bildir('Metin kısaltılıyor (metin_ozetle)...')">
+              <div class="ikon-kutu ton-nane">📏</div>
+              <div class="satir-orta">
+                <div class="satir-baslik">Metni kısalt / detaylandır</div>
+                <div class="satir-alt">Gemini ile slayta sığdır veya kaynak metinden aç</div>
+              </div>
+              <span class="rozet ton-gri">Gemini</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function cizKasa() {
+      document.getElementById('ust-alan').innerHTML = ustBaslikCiz('Bağlantılar ve Kasa', 'API anahtarları, jeton süreleri ve rehber', 'merkez');
+      document.getElementById('alt-alan').innerHTML = sekmeCubuguCiz('kasa');
+
+      const satirOlustur = (id) => {
+        const b = ENTEGRASYONLAR[id];
+        const ilkKod = b.anahtarlar[0];
+        const maske = durum.maskeler[ilkKod] || '••••••••9a4f';
+        return `
+          <div class="satir" onclick="durum.seciliEntegrasyonId='${id}';durum.seciliAnahtarKodu='${ilkKod}';durum.kasaSekme='anahtarlar';durum.pencere='entegrasyon';ciz()">
+            <div class="ikon-kutu ${b.ton}">${b.ikon}</div>
+            <div class="satir-orta">
+              <div class="satir-baslik">${b.ad}</div>
+              <div class="satir-alt">${b.hesap} · ${maske} · ${b.kota}</div>
+            </div>
+            <span class="rozet ${b.ton}">${b.kalan}</span>
+          </div>
+        `;
+      };
+
+      document.getElementById('icerik-alan').innerHTML = `
+        <div class="kart" style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;gap:8px">
+            <div style="flex:1;background:#E3F5EC;border-radius:12px;padding:9px;text-align:center">
+              <div style="font-size:17px;font-weight:800;color:#2F9E77">8</div>
+              <div style="font-size:11px;font-weight:700;color:#2F9E77">Geçerli</div>
+            </div>
+            <div style="flex:1;background:#FFF5D1;border-radius:12px;padding:9px;text-align:center">
+              <div style="font-size:17px;font-weight:800;color:#B58A00">2</div>
+              <div style="font-size:11px;font-weight:700;color:#B58A00">Yakında Dolar</div>
+            </div>
+            <div style="flex:1;background:#E4EFFB;border-radius:12px;padding:9px;text-align:center">
+              <div style="font-size:17px;font-weight:800;color:#3E86D6">10</div>
+              <div style="font-size:11px;font-weight:700;color:#3E86D6">Entegrasyon</div>
+            </div>
+          </div>
+          <div style="background:#EFECE6;border-radius:10px;padding:8px 12px;font-size:11.5px;color:#6A6F7D">
+            🔒 Anahtarlar cihazında şifreli tutulur (<strong>SecureStore</strong>); yalnızca son 4 hanesi görünür.
+          </div>
+        </div>
+
+        <div class="bolum">
+          <div class="bolum-ust"><span class="bolum-baslik">TikTok Hesap Yetkilendirmesi (OAuth 2.0)</span></div>
+          <div class="kart-liste">
+            <div class="satir" onclick="durum.pencere='tiktok-oauth';ciz()">
+              <div class="ikon-kutu ton-vurgu">♪</div>
+              <div class="satir-orta">
+                <div class="satir-baslik">TikTok Login Kit & Direct Post</div>
+                <div class="satir-alt">${durum.tiktokBagli ? '@dailybrief.co · user.info.basic, video.publish' : 'Hesabı OAuth 2.0 ile bağla'}</div>
+              </div>
+              <span class="rozet ${durum.tiktokBagli?'ton-nane':'ton-vurgu'}">${durum.tiktokBagli?'Yetkili':'Bağla'}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bolum">
+          <div class="bolum-ust"><span class="bolum-baslik">Sosyal Medya Kanalları</span></div>
+          <div class="kart-liste">
+            ${satirOlustur('tiktok')}
+            ${satirOlustur('meta')}
+            ${satirOlustur('threads')}
+          </div>
+        </div>
+
+        <div class="bolum">
+          <div class="bolum-ust"><span class="bolum-baslik">Yapay Zekâ ve Altyapı</span></div>
+          <div class="kart-liste">
+            ${satirOlustur('gemini')}
+            ${satirOlustur('github')}
+          </div>
+        </div>
+      `;
+    }
+
+    function cizAsistan() {
+      document.getElementById('ust-alan').innerHTML = ustBaslikCiz('Gemini Asistan & Hafıza', `${durum.kurallar.length} eğitim kuralı aktif · Kasa anahtarı bağlı`, 'merkez', `<span class="rozet ton-vurgu">✨ Gemini</span>`);
+      document.getElementById('alt-alan').innerHTML = sekmeCubuguCiz('asistan');
+
+      document.getElementById('icerik-alan').innerHTML = `
+        <div class="segment">
+          <button class="segment-oge ${durum.asistanSekme==='sohbet'?'secili':''}" onclick="durum.asistanSekme='sohbet';ciz()">💬 AI Sohbet</button>
+          <button class="segment-oge ${durum.asistanSekme==='hafiza'?'secili':''}" onclick="durum.asistanSekme='hafiza';ciz()">🧠 Proje Hafızası (${durum.kurallar.length})</button>
+        </div>
+
+        ${durum.asistanSekme === 'sohbet' ? `
+          <div style="display:flex;flex-direction:column;gap:12px">
+            ${durum.mesajlar.map((m, idx) => `
+              <div style="display:flex;flex-direction:column;align-items:${m.kim==='ben'?'flex-end':'flex-start'};gap:6px">
+                ${m.arac ? `<span class="rozet ton-gri" style="font-size:10px">⚙️ ${m.arac}</span>` : ''}
+                <div style="max-width:86%;padding:10px 14px;border-radius:18px;font-size:13px;line-height:1.45;background:${m.kim==='ben'?'#6C5CE7':'#FFFFFF'};color:${m.kim==='ben'?'#FFF':'#22242C'};border:1px solid #ECE7E1">
+                  ${m.metin}
+                </div>
+                ${m.onayKarti ? `
+                  <div class="kart" style="width:88%;border:1px solid #EEEBFF;display:flex;flex-direction:column;gap:8px">
+                    <div style="font-size:10px;font-weight:800;color:#6C5CE7">ONAY GEREKTİREN İŞLEM</div>
+                    <div style="font-size:13.5px;font-weight:700">${m.onayKarti.baslik}</div>
+                    <div style="font-size:12px;color:#6A6F7D">${m.onayKarti.alt}</div>
+                    ${m.onayKarti.durum === 'bekliyor' ? `
+                      <div style="display:flex;gap:8px;margin-top:2px">
+                        <button class="dugme dugme-ikincil dugme-kucuk" style="flex:1" onclick="durum.mesajlar[${idx}].onayKarti.durum='reddedildi';ciz()">Reddet</button>
+                        <button class="dugme dugme-birincil dugme-kucuk" style="flex:1.3" onclick="durum.mesajlar[${idx}].onayKarti.durum='onaylandi';bildir('Onaylandı ve bota iletildi');ciz()">✓ Onayla</button>
+                      </div>
+                    ` : `<span class="rozet ${m.onayKarti.durum==='onaylandi'?'ton-nane':'ton-gri'}">${m.onayKarti.durum==='onaylandi'?'Onaylandı ve bota iletildi ✓':'İptal edildi'}</span>`}
+                  </div>
+                ` : ''}
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="kart" style="display:flex;gap:8px;align-items:center;padding:10px">
+            <input id="sohbet-girdi" placeholder="Bota soru sor veya yeni kural öğret…" />
+            <button class="dugme dugme-birincil dugme-kucuk" onclick="mesajGonder()">Gönder</button>
+          </div>
+        ` : `
+          <div class="kart-liste">
+            <div class="satir satir-statik">
+              <div class="ikon-kutu ton-nane">🎓</div>
+              <div class="satir-orta">
+                <div class="satir-baslik">Kalıcı Kural Belleği (SecureStore)</div>
+                <div class="satir-alt">Kurallar her Gemini haber ve özet istemine otomatik eklenir</div>
+              </div>
+              <span class="rozet ton-nane">${durum.kurallar.length} Aktif</span>
+            </div>
+          </div>
+
+          <div class="bolum">
+            <div class="bolum-ust">
+              <span class="bolum-baslik">Aktif Eğitim Kuralları</span>
+              <button class="bolum-eylem" onclick="durum.pencere='yeni-kural';ciz()">＋ Yeni Kural</button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              ${durum.kurallar.map(k => `
+                <div class="kart" style="display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <span class="rozet ${k.ton}">${k.kat}</span>
+                    <button onclick="durum.kurallar=durum.kurallar.filter(x=>x.id!==${k.id});ciz()" style="border:none;background:none;color:#D9486E;cursor:pointer;font-size:12px;font-weight:700">Sil</button>
+                  </div>
+                  <div style="font-size:13px;font-weight:700;line-height:1.4">${k.kural}</div>
+                  <div style="background:#EFECE6;border-radius:10px;padding:8px 10px;font-size:11px;display:flex;flex-direction:column;gap:3px">
+                    ${k.yanlis ? `<div style="color:#D9486E">✗ Yanlış: “${k.yanlis}”</div>` : ''}
+                    ${k.dogru ? `<div style="color:#2F9E77">✓ Doğru: “${k.dogru}”</div>` : ''}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `}
+      `;
+    }
+
+    function mesajGonder() {
+      const inp = document.getElementById('sohbet-girdi');
+      const v = inp ? inp.value.trim() : '';
+      if (!v) return;
+      durum.mesajlar.push({ kim: 'ben', metin: v });
+      durum.mesajlar.push({
+        kim: 'asistan',
+        arac: 'Gemini 2.0 Flash · Canlı Özet',
+        metin: `“${v}” talimatını değerlendirdim. İstersen bunu kalıcı Proje Hafızası kuralı olarak kaydedebilirim.`
+      });
+      ciz();
+    }
+
+    function cizSablon() {
+      document.getElementById('ust-alan').innerHTML = ustBaslikCiz('Şablondan Yeni Bot', 'Modül 4 · Sıfırdan kod yazmadan yeni proje kur', 'merkez');
+      document.getElementById('alt-alan').innerHTML = sekmeCubuguCiz('sablon');
+
+      const sablonlar = [
+        ['haber', '📰', 'ton-gok', 'Haber & Gündem Botu (DailyBrief)', 'RSS havuzu · Gemini önem puanlama · 4 katmanlı doğrulama'],
+        ['koleksiyon', '🕌', 'ton-nane', 'Günlük Kart & Sesli Video (Ezan Plus)', 'Yerel veritabanı · Günlük zamanlama · Sesli Reels/Shorts'],
+        ['sektor', '🏠', 'ton-seftali', 'Sektörel Bilgi & Konu Bankası (postEDM)', 'Konu bankası (S1-S6) + Sektörel RSS haberleri']
+      ];
+
+      document.getElementById('icerik-alan').innerHTML = `
+        <div class="bolum">
+          <div class="bolum-ust"><span class="bolum-baslik">1. Algoritma şablonunu seç</span></div>
+          <div class="kart-liste">
+            ${sablonlar.map(([id, ik, ton, ad, alt]) => `
+              <div class="satir" onclick="durum.seciliSablon='${id}';ciz()">
+                <div class="ikon-kutu ${ton}">${ik}</div>
+                <div class="satir-orta">
+                  <div class="satir-baslik">${ad}</div>
+                  <div class="satir-alt">${alt}</div>
+                </div>
+                ${durum.seciliSablon === id ? `<span class="rozet ton-vurgu">✓ Seçili</span>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="bolum">
+          <div class="bolum-ust"><span class="bolum-baslik">2. Kimlik ve Hedef Kanallar</span></div>
+          <div class="kart" style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <span style="font-size:12px;font-weight:700;color:#6A6F7D">Proje Adı</span>
+              <input value="${durum.sablonAd}" oninput="durum.sablonAd=this.value" />
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <span style="font-size:12px;font-weight:700;color:#6A6F7D">Sosyal Medya Hesabı</span>
+              <input value="${durum.sablonHesap}" oninput="durum.sablonHesap=this.value" />
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;padding-top:2px">
+              <span class="cip secili">✓ Instagram</span>
+              <span class="cip secili">✓ TikTok Direct Post</span>
+              <span class="cip secili">✓ Threads</span>
+              <span class="cip">YouTube Shorts</span>
+            </div>
+            <button class="dugme dugme-birincil" onclick="bildir(durum.sablonAd + ' şablon yapılandırması oluşturuldu!')">✨ Şablon Yapılandırmasını Oluştur</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function pencereCiz() {
+      const p = durum.pencere;
+      if (!p) {
+        document.getElementById('pencere-alan').innerHTML = '';
+        return;
+      }
+
+      let baslik = '';
+      let alt = '';
+      let icerik = '';
+
+      if (p === 'editor') {
+        baslik = 'İçerik ve Yerleşim Editörü';
+        alt = 'Kaydedince slaytlar seçtiğin metin ve yerleşimle yeniden çizilir (~1 dk)';
+        icerik = `
+          <div class="segment">
+            <button class="segment-oge ${durum.editorSekme==='metin'?'secili':''}" onclick="durum.editorSekme='metin';pencereCiz()">Metin ve Açıklama</button>
+            <button class="segment-oge ${durum.editorSekme==='yerlesim'?'secili':''}" onclick="durum.editorSekme='yerlesim';pencereCiz()">Slayt Yerleşimi</button>
+          </div>
+
+          ${durum.editorSekme === 'metin' ? `
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#6A6F7D;margin-bottom:4px">Başlık</div>
+                <textarea rows="2" oninput="durum.baslik=this.value">${durum.baslik}</textarea>
+              </div>
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#6A6F7D;margin-bottom:4px">Özet (alt metin)</div>
+                <textarea rows="2" oninput="durum.ozet=this.value">${durum.ozet}</textarea>
+              </div>
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#6A6F7D;margin-bottom:4px">Paylaşım açıklaması (Instagram / TikTok)</div>
+                <textarea rows="3" oninput="durum.aciklama=this.value">${durum.aciklama}</textarea>
+              </div>
+            </div>
+          ` : `
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#6A6F7D;margin-bottom:6px">Başlık Bloğu Dikey Konumu</div>
+                <div class="segment">
+                  <button class="segment-oge ${durum.dikeyKonum==='yukari'?'secili':''}" onclick="durum.dikeyKonum='yukari';pencereCiz()">↑ Üst Bölge</button>
+                  <button class="segment-oge ${durum.dikeyKonum==='orta'?'secili':''}" onclick="durum.dikeyKonum='orta';pencereCiz()">Orta (Varsayılan)</button>
+                  <button class="segment-oge ${durum.dikeyKonum==='asagi'?'secili':''}" onclick="durum.dikeyKonum='asagi';pencereCiz()">↓ Alt Bölge</button>
+                </div>
+              </div>
+              <div class="kart-liste">
+                ${[
+                  ['kanca', 'Kanca (Üst vurgu şeridi)', 'Slaytın tepesindeki kategori etiketi'],
+                  ['ozet', 'Özet satırı', 'Başlığın altındaki açıklama cümlesi'],
+                  ['vurgu', 'Sarı kelime vurgusu', 'Önemli kelimelerin renkli vurgulanması'],
+                  ['alinti', 'Alıntı kutusu', 'Varsa konuşmacı alıntısı kartı']
+                ].map(([k, ad, acik]) => `
+                  <div class="satir" onclick="durum.elemanlar.${k}=!durum.elemanlar.${k};pencereCiz()">
+                    <div class="satir-orta">
+                      <div class="satir-baslik">${ad}</div>
+                      <div class="satir-alt">${acik}</div>
+                    </div>
+                    <div class="anahtar ${durum.elemanlar[k]?'acik':''}"><div class="anahtar-top"></div></div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `}
+
+          <button class="dugme dugme-birincil" onclick="durum.pencere=null;bildir('Metin ve yerleşim kaydedildi (metin_duzenle)');ciz()">✓ Kaydet ve yeniden çizdir</button>
+        `;
+      } else if (p === 'foto') {
+        baslik = 'Slayt 1 için fotoğraf seç';
+        alt = 'Seçtiğin adayla slayt yeniden çizilir (gorsel_sec:aday:1)';
+        icerik = `
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            ${[
+              [1, 'Aday 1 (Haber Fotoğrafı)', '#1E3A8A'],
+              [2, 'Aday 2 (Ajans Fotoğrafı)', '#4C1D95'],
+              [3, 'Aday 3 (Pexels Temsili)', '#065F46'],
+              [4, 'AI Kapak Görseli (~$0,04)', '#831843']
+            ].map(([no, ad, renk]) => `
+              <div onclick="durum.seciliAday=${no};pencereCiz()" style="padding:10px;border-radius:14px;background:#FFFFFF;border:2px solid ${durum.seciliAday===no?'#6C5CE7':'#ECE7E1'};cursor:pointer;text-align:center">
+                <div style="height:80px;border-radius:10px;background:${renk};color:#FFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-bottom:6px">Aday #${no}</div>
+                <div style="font-size:11px;font-weight:700">${ad}</div>
+              </div>
+            `).join('')}
+          </div>
+          <button class="dugme dugme-birincil" onclick="durum.pencere=null;bildir('Aday #' + durum.seciliAday + ' seçildi (gorsel_sec)');ciz()">✓ Aday #${durum.seciliAday} Kullan</button>
+        `;
+      } else if (p === 'tiktok-oauth') {
+        baslik = 'TikTok Login Kit · OAuth 2.0';
+        alt = 'developers.tiktok.com · Content Posting API Yetkilendirmesi';
+        icerik = `
+          <div class="kart-liste">
+            <div class="satir satir-statik">
+              <div class="ikon-kutu ton-nane">👤</div>
+              <div class="satir-orta">
+                <div class="satir-baslik">user.info.basic</div>
+                <div class="satir-alt">Hesap profil adı (@dailybrief.co) ve avatar doğrulaması</div>
+              </div>
+              <span class="rozet ton-nane">Onaylı</span>
+            </div>
+            <div class="satir satir-statik">
+              <div class="ikon-kutu ton-vurgu">🚀</div>
+              <div class="satir-orta">
+                <div class="satir-baslik">video.publish</div>
+                <div class="satir-alt">Direct Post API ile onaylanan içeriği doğrudan yayınlama</div>
+              </div>
+              <span class="rozet ton-vurgu">Direct Post</span>
+            </div>
+            <div class="satir satir-statik">
+              <div class="ikon-kutu ton-gok">☁️</div>
+              <div class="satir-orta">
+                <div class="satir-baslik">video.upload</div>
+                <div class="satir-alt">Taslak olarak TikTok gelen kutusuna medya yükleme</div>
+              </div>
+              <span class="rozet ton-gok">Upload</span>
+            </div>
+          </div>
+          <div style="font-size:11px;color:#6A6F7D;background:#EFECE6;padding:10px;border-radius:12px">
+            <strong>Redirect URI:</strong> https://ozbornstudio.com/auth/tiktok/callback
+          </div>
+          <button class="dugme dugme-birincil" onclick="durum.tiktokBagli=true;durum.pencere=null;bildir('TikTok hesabı (@dailybrief.co) OAuth 2.0 ile yetkilendirildi');ciz()">✓ Authorize & Continue with TikTok</button>
+        `;
+      } else if (p === 'entegrasyon') {
+        const b = ENTEGRASYONLAR[durum.seciliEntegrasyonId];
+        baslik = b.ad;
+        alt = `${b.hesap} · ${b.kota}`;
+        icerik = `
+          <div class="segment">
+            <button class="segment-oge ${durum.kasaSekme==='anahtarlar'?'secili':''}" onclick="durum.kasaSekme='anahtarlar';pencereCiz()">Anahtarlar</button>
+            <button class="segment-oge ${durum.kasaSekme==='guncelle'?'secili':''}" onclick="durum.kasaSekme='guncelle';pencereCiz()">Jeton Yenile</button>
+            <button class="segment-oge ${durum.kasaSekme==='rehber'?'secili':''}" onclick="durum.kasaSekme='rehber';pencereCiz()">Nasıl Alınır?</button>
+          </div>
+
+          ${durum.kasaSekme === 'anahtarlar' ? `
+            <div class="kart" style="background:#EFECE6;font-size:12px;color:#22242C">${b.not}</div>
+            <div class="kart-liste">
+              ${b.anahtarlar.map(kod => `
+                <div class="satir" onclick="durum.seciliAnahtarKodu='${kod}';durum.kasaSekme='guncelle';pencereCiz()">
+                  <div class="ikon-kutu ton-vurgu">🔑</div>
+                  <div class="satir-orta">
+                    <div class="satir-baslik">${kod}</div>
+                    <div class="satir-alt">GitHub Secrets + SecureStore · Değiştirmek için dokun</div>
+                  </div>
+                  <span class="rozet ton-vurgu">${durum.maskeler[kod] || '••••••••9a4f'}</span>
+                </div>
+              `).join('')}
+            </div>
+          ` : durum.kasaSekme === 'guncelle' ? `
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:12px;color:#6A6F7D">Yeni <strong>${durum.seciliAnahtarKodu}</strong> değerini yapıştır. Tam değer hiçbir yerde gösterilmez; yalnızca son 4 hanesi saklanır:</div>
+              <input id="yeni-anahtar-girdi" type="password" placeholder="Yeni jeton / anahtar değerini girin…" />
+              <button class="dugme dugme-birincil" onclick="anahtarGuncelle()">🔒 Şifrele ve Kasaya Kaydet</button>
+            </div>
+          ` : `
+            <div class="kart" style="display:flex;flex-direction:column;gap:10px">
+              ${b.rehber.map((adim, i) => `
+                <div style="display:flex;gap:10px;align-items:flex-start;font-size:12.5px">
+                  <span class="rozet ton-vurgu">${i + 1}</span>
+                  <span style="flex:1">${adim}</span>
+                </div>
+              `).join('')}
+            </div>
+          `}
+        `;
+      } else if (p === 'yeni-kural') {
+        baslik = 'Bota Yeni Kural Öğret';
+        alt = 'DailyBrief Kalıcı Proje Hafızası';
+        icerik = `
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#6A6F7D;margin-bottom:4px">Kural / Talimat</div>
+              <textarea id="kural-metin" rows="2" placeholder="ör. Ekonomi başlıklarında ünlem işareti kullanma, net rakamla başla."></textarea>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#6A6F7D;margin-bottom:4px">Doğru Örnek</div>
+              <input id="kural-dogru" placeholder="ör. Yıllık enflasyon %44,38 olarak açıklandı" />
+            </div>
+            <button class="dugme dugme-birincil" onclick="yeniKuralKaydet()">✓ Hafızaya Kaydet</button>
+          </div>
+        `;
+      }
+
+      document.getElementById('pencere-alan').innerHTML = `
+        <div class="perde" onclick="if(event.target===this){durum.pencere=null;pencereCiz()}">
+          <div class="alt-pencere">
+            <div class="tutamak"></div>
+            <div style="padding:4px 18px 8px;display:flex;justify-content:space-between;align-items:flex-start">
+              <div>
+                <div style="font-size:16px;font-weight:800">${baslik}</div>
+                <div style="font-size:11.5px;color:#6A6F7D">${alt}</div>
+              </div>
+              <button class="geri-btn" style="width:28px;height:28px;font-size:13px" onclick="durum.pencere=null;pencereCiz()">✕</button>
+            </div>
+            <div class="pencere-icerik">${icerik}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function anahtarGuncelle() {
+      const el = document.getElementById('yeni-anahtar-girdi');
+      const v = el ? el.value.trim() : '';
+      if (!v) return;
+      const son4 = v.slice(-4).padStart(4, '•');
+      durum.maskeler[durum.seciliAnahtarKodu] = '••••••••' + son4;
+      durum.kasaSekme = 'anahtarlar';
+      bildir(durum.seciliAnahtarKodu + ' şifrelendi ve kasaya kaydedildi');
+      ciz();
+    }
+
+    function yeniKuralKaydet() {
+      const m = document.getElementById('kural-metin')?.value.trim();
+      const d = document.getElementById('kural-dogru')?.value.trim();
+      if (!m) return;
+      durum.kurallar.unshift({ id: Date.now(), kat: 'Yazım & Üslup', ton: 'ton-vurgu', kural: m, dogru: d || 'Kural aktif' });
+      durum.pencere = null;
+      bildir('Yeni kural Proje Hafızasına eklendi');
+      ciz();
+    }
+
+    function ciz() {
+      if (durum.ekran === 'merkez') cizMerkez();
+      else if (durum.ekran === 'onay') cizOnay();
+      else if (durum.ekran === 'kasa') cizKasa();
+      else if (durum.ekran === 'asistan') cizAsistan();
+      else if (durum.ekran === 'sablon') cizSablon();
+      pencereCiz();
+    }
+
+    ciz();
+  </script>
+</body>
+</html>

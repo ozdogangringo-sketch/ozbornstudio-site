@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — OzBorn Studio</title>
+  <style>
+    body {
+      background: #F6F4F0;
+      color: #22242C;
+      font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "Segoe UI", Roboto, sans-serif;
+      line-height: 1.7;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    .doc {
+      max-width: 820px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      border: 1px solid #ECE7E1;
+      border-radius: 24px;
+      padding: 40px;
+    }
+    h1 { font-size: 32px; margin-bottom: 8px; }
+    h2 { font-size: 20px; margin-top: 28px; margin-bottom: 8px; color: #22242C; }
+    p, li { font-size: 15px; color: #454954; }
+    ul { padding-left: 22px; }
+    .meta { color: #6A6F7D; font-size: 13px; margin-bottom: 24px; }
+    a { color: #6C5CE7; text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="doc">
+    <p><a href="./index.html">← Back to OzBorn Studio</a></p>
+    <h1>Privacy Policy (Gizlilik Politikası)</h1>
+    <div class="meta">Effective Date: October 7, 2026 · Domain: https://ozbornstudio.com</div>
+
+    <p>
+      OzBorn Studio ("we", "our", or "the Application") provides a multi-channel content management and social media publishing interface for authorized creators and editorial teams. This Privacy Policy explains how we collect, use, store, and protect information when you use OzBorn Studio and connect third-party social media accounts such as TikTok, Instagram, Facebook, Threads, and YouTube.
+    </p>
+
+    <h2>1. Information We Collect via TikTok APIs</h2>
+    <p>When you explicitly authorize OzBorn Studio using <strong>TikTok Login Kit (OAuth 2.0)</strong>, we request access only to the following scopes:</p>
+    <ul>
+      <li><strong><code>user.info.basic</code>:</strong> Used solely to display your connected TikTok account's display name, username/handle, and avatar inside the OzBorn Studio publishing interface so you know which account you are posting to.</li>
+      <li><strong><code>video.upload</code> and <code>video.publish</code> (Content Posting API):</strong> Used solely to upload and publish video or photo carousel content that you explicitly review, configure, and approve within OzBorn Studio.</li>
+    </ul>
+
+    <h2>2. How We Use Your Information</h2>
+    <ul>
+      <li>To authenticate your identity and display your connected social media profile status inside the application.</li>
+      <li>To query creator publishing capabilities (such as privacy level options and interaction permissions) required by the TikTok Direct Post UX Guidelines.</li>
+      <li>To publish or upload media content to your TikTok account only when you initiate a publish or schedule action.</li>
+      <li>We <strong>never</strong> sell, rent, or share your personal data or OAuth tokens with any third party or advertising network.</li>
+    </ul>
+
+    <h2>3. Token Storage & Security</h2>
+    <p>
+      OAuth access tokens and refresh tokens are stored using hardware-backed encryption on your device (<code>expo-secure-store</code> / iOS Keychain / Android Keystore) and encrypted repository secrets (<code>libsodium sealed box</code>). Full token strings are never displayed in plaintext on any screen.
+    </p>
+
+    <h2>4. Data Retention & Deletion (Revoking Access)</h2>
+    <p>
+      You may disconnect your TikTok or other social media accounts at any time directly inside OzBorn Studio (<em>Settings → Connections & Vault → Remove / Disconnect</em>), which immediately deletes the stored OAuth tokens. You may also revoke OzBorn Studio's access at any time from your TikTok mobile app under <strong>Settings and privacy → Security and permissions → Apps and services permissions</strong>.
+    </p>
+    <p>
+      To request complete deletion of any associated metadata, contact us at <a href="mailto:privacy@ozbornstudio.com">privacy@ozbornstudio.com</a>. Requests are processed within 7 business days.
+    </p>
+
+    <h2>5. Contact Us</h2>
+    <p>
+      If you have questions about this Privacy Policy or our data practices, please contact:<br />
+      <strong>OzBorn Studio</strong><br />
+      Website: <a href="https://ozbornstudio.com">https://ozbornstudio.com</a><br />
+      Email: <a href="mailto:privacy@ozbornstudio.com">privacy@ozbornstudio.com</a>
+    </p>
+  </div>
+</body>
+</html>
